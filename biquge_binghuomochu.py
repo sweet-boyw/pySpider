@@ -3,12 +3,13 @@ import pymongo
 from lxml import etree
 
 class BiqugeBinghuomochu(object):
+    # 初始化项目
     def __init__(self):
         self.url = 'https://www.xbiquge.la/9/8179/'
         self.header = {}
         self.data = {}
         self.Baseurl = 'https://www.xbiquge.la/'
-
+    # 获取数据
     def getdata(self,url):
         try:
             res = requests.get(url)
@@ -16,7 +17,7 @@ class BiqugeBinghuomochu(object):
                 return res.text
         except:
             return res.status_code
-
+    # 解析数据
     def parsePage(self,data):
         html = etree.HTML(data)
         list = html.xpath('//div[@id="list"]/dl/dd')
@@ -27,12 +28,12 @@ class BiqugeBinghuomochu(object):
             temp['url'] = self.Baseurl + li.xpath('./a/@href')[0]
             page.append(temp)
         return page
-
+    # 连接mongo数据库
     def savedata(self):
         client = pymongo.MongoClient(host='localhost',port=27017)
         db = client['studytest']
         return db
-
+    # 主任务
     def run(self):
         res = self.getdata(self.url)
         page = self.parsePage(res)
